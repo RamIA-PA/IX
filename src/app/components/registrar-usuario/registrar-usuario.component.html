@@ -12,7 +12,33 @@
                 <span *ngIf="registrarUsuario.get('email')?.hasError('email') && registrarUsuario.get('email')?.touched" class="text-danger errorLabel">
                     El <strong>correo</strong> es invalido
                 </span>
+
+
             </div>
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" formControlName="nombre" placeholder="Brian">
+              <label>Nombre</label>
+              <span *ngIf="registrarUsuario.get('nombre')?.hasError('required') && registrarUsuario.get('nombre')?.touched" class="text-danger errorLabel">
+                  El <strong>nombre</strong> es requerido
+              </span>
+              <span *ngIf="registrarUsuario.get('nombre')?.hasError('minlength') && registrarUsuario.get('nombre')?.touched" class="text-danger errorLabel">
+                El <strong>nombre</strong> debe tener al menos 2 caracteres
+            </span>
+
+
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" formControlName="apellido" placeholder="Ram">
+            <label>Apellido</label>
+            <span *ngIf="registrarUsuario.get('apellido')?.hasError('required') && registrarUsuario.get('apellido')?.touched" class="text-danger errorLabel">
+                El <strong>apellido</strong> es requerido
+            </span>
+            <span *ngIf="registrarUsuario.get('apellido')?.hasError('minlength') && registrarUsuario.get('apellido')?.touched" class="text-danger errorLabel">
+              El <strong>apellido</strong> debe tener al menos 2 caracteres
+          </span>
+
+
+        </div>
             <div class="form-floating mb-3">
                 <input type="password" class="form-control" formControlName="password" placeholder="Password">
                 <label>Password</label>
@@ -27,9 +53,19 @@
                 <input type="password" class="form-control" formControlName="repetirPassword" placeholder="Repetir Password">
                 <label>Repetir Passowrd</label>
             </div>
+            <div cclass="d-none">
+              <input type="text" class="d-none" formControlName="horas">
+
+          </div>
+          <div class="d-none">
+            <input type="text" class="d-none" formControlName="UID" placeholder="Repetir Password">
+
+        </div>
             <div class="d-grid gap-2 mb-3">
-                <button class="btn btn-primary btn-lg" [disabled]="registrarUsuario.invalid" type="submit">Aceptar</button>
-            </div>           
+                <button (click)="agregarDato()" class="btn btn-primary btn-lg"  type="submit">Aceptar</button>
+            </div>
+
+
             <a routerLink="/login">Volver</a>
         </form>
     </div>

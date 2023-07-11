@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { FirebaseCodeErrorEnum } from '../utils/firebase-code-error';
-
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
+import { deleteDoc, doc } from 'firebase/firestore';
 @Injectable({
   providedIn: 'root',
 })
 export class FirebaseCodeErrorService {
-  constructor() {}
+  constructor(private firestore: AngularFirestore) {}
 
   codeError(code: string) {
     switch (code) {
@@ -27,9 +29,39 @@ export class FirebaseCodeErrorService {
 
       // El usuario no existe
       case FirebaseCodeErrorEnum.UserNotFound:
-        return 'El usuario no existe'; 
+        return 'El usuario no existe';
       default:
         return 'Error desconocido';
     }
   }
+
+  agregarusuarios(usuarios: any): Promise<any> {
+    return this.firestore.collection('usuarios').add(usuarios);
+  }
+
+  getusuarios(): Observable<any> {
+    return this.firestore.collection('usuarios', ref => ref.orderBy('fechaCreacion', 'asc')).snapshotChanges();
+  }
+
+  eliminarUser(id: string): Promise<any> {
+    return this.firestore.collection('usuarios').doc(id).delete();
+  }
+
+/*
+  deletePlace(place: Place) {
+    const placeDocRef = doc(this.firestore, `places/${place.id}`);
+    return deleteDoc(placeDocRef);
+  }
+
+  */
+
+  getusuariosid(id: string): Observable<any> {
+    return this.firestore.collection('usuarios').doc(id).snapshotChanges();
+  }
+
+  actualizarusuarios(id: string, data:any): Promise<any> {
+    return this.firestore.collection('usuarios').doc(id).update(data);
+  }
+
+
 }

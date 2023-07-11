@@ -1,0 +1,34 @@
+<div class="container mt-4">
+  <div class="card">
+      <div class="card-body">
+          <span class="h3">Listado de Empleados</span>
+          <br>
+          <button class="btn btn-dark btn-lg float-right" routerLink="/create-empleado">Agregar</button>
+
+          <table class="table table-striped mt-5">
+              <thead>
+                <tr>
+                  <th>UID</th>
+                  <th>Apellido</th>
+                  <th>Nombre</th>
+                  <th>horas</th>
+                  <th>email</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let usuarios of items$ | async">
+                  <td>{{ usuarios.UID }}</td>
+                  <td>{{ usuarios.apellido }}</td>
+                  <td>{{ usuarios.email }}</td>
+                  <td>{{ usuarios.horas }}</td>
+                  <td>{{ usuarios.nombre}}</td>
+                  <td>
+                    <i class="fas fa-edit fa-lg text-info mr-2"></i>
+                    <button (click)="eliminar(usuarios.UID)" class="fas fa-trash-alt fa-lg text-danger">eliminar</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+      </div>
+  </div>
+</div>

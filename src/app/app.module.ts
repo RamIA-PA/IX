@@ -17,7 +17,10 @@ import { VerificarCorreoComponent } from './components/verificar-correo/verifica
 import { RecuperarPasswordComponent } from './components/recuperar-password/recuperar-password.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
 
-import { environment } from 'src/environments/environment';
+import { CrudComponent } from './components/crud/crud.component';
+import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
+import { environment } from '../environments/environment';
+import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,9 @@ import { environment } from 'src/environments/environment';
     RegistrarUsuarioComponent,
     VerificarCorreoComponent,
     RecuperarPasswordComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    CrudComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -35,7 +40,7 @@ import { environment } from 'src/environments/environment';
     ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     BrowserAnimationsModule, // required animations module
-    ToastrModule.forRoot(), // ToastrModule added
+    ToastrModule.forRoot(), provideFirebaseApp(() => initializeApp(environment.firebase)), provideFirestore(() => getFirestore()), // ToastrModule added
   ],
   providers: [],
   bootstrap: [AppComponent]
