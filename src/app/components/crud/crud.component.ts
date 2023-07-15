@@ -18,6 +18,8 @@ export class CrudComponent implements OnInit {
   usuarioActual: any;
   editarIdDocumento: string = "";
   datosUsuarioForm!: FormGroup;
+  dataUser: any;
+
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -40,7 +42,7 @@ export class CrudComponent implements OnInit {
       horas: new FormControl('')
     });
 
-    /*
+    
     this.afAuth.currentUser.then(user => {
       if(user) {
         this.dataUser = user;
@@ -49,7 +51,7 @@ export class CrudComponent implements OnInit {
         this.router.navigate(['/login']);
       }
     })
-    */
+    
   }
 
   logOut() {
