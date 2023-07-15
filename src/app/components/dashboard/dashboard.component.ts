@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
+import { map } from 'rxjs';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -14,18 +16,32 @@ export class DashboardComponent implements OnInit {
   constructor(private afAuth: AngularFireAuth,
       private router: Router,
       ) {
+        this.afAuth.authState.subscribe((usuario) => {
+          this.usuarioActual = usuario;
+          this.actualizarVisibilidadDiv();
+        });
 
       }
 
-  ngOnInit(): void {
-    this.afAuth.currentUser.then(user => {
-      if(user && user.emailVerified) {
-        this.dataUser = user;
-        console.log(user)
-      } else {
-        this.router.navigate(['/login']);
-      }
-    })
+ 
+ngOnInit(): void {
+  this.actualizarVisibilidadDiv();
+  this.afAuth.onAuthStateChanged((user) => {
+    if (user) {
+      this.dataUser = user;
+      console.log(user);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  });
+}
+  
+  usuarioActual: any;
+mostrarDiv: boolean = false;
+
+  actualizarVisibilidadDiv(): void {
+    const usuarioPermitidoUID = 'H1vrgH7AJ3aAVZbpQ3lNf75qqbb2';
+    this.mostrarDiv = this.usuarioActual?.uid === usuarioPermitidoUID;
   }
 
   logOut() {
@@ -33,6 +49,6 @@ export class DashboardComponent implements OnInit {
   }
 
 
-
+  
 
 }

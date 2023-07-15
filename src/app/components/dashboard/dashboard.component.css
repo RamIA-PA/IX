@@ -365,12 +365,7 @@ select:disabled {
   display: none;
 }
 
-button,
-[type=button],
-[type=reset],
-[type=submit] {
-  -webkit-appearance: button;
-}
+
 button:not(:disabled),
 [type=button]:not(:disabled),
 [type=reset]:not(:disabled),
@@ -427,7 +422,7 @@ legend + * {
 
 [type=search] {
   outline-offset: -2px;
-  -webkit-appearance: textfield;
+ 
 }
 
 /* rtl:raw:
@@ -2443,8 +2438,7 @@ textarea.form-control-lg {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  -webkit-print-color-adjust: exact;
-          color-adjust: exact;
+
 }
 .form-check-input[type=checkbox] {
   border-radius: 0.25em;
@@ -14592,8 +14586,7 @@ button.list-group-item-gray.active {
 }
 body {
   text-rendering: optimizeLegibility;
-  font-smoothing: antialiased;
-  -moz-font-feature-settings: "liga" on;
+ 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -14804,7 +14797,7 @@ body {
   -khtml-user-drag: none;
   -moz-user-drag: none;
   -o-user-drag: none;
-  user-drag: none;
+
 }
 
 .ui-stars {

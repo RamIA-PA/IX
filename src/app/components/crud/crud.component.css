@@ -1,7 +1,67 @@
 
 
+.modal-abrir {
+  display: block !important;
+}
 
-@charset "UTF-8";
+.loginform {
+
+  height: max-content; 
+  width: 100%;
+  margin: 0px;
+  padding: 1%;
+  
+}
+
+
+.contenedorimg{
+
+  margin-left: 1vh; 
+  margin-top: 1vh;
+  align-items: flex-start;
+
+}
+
+#logoimg{
+margin-top: 1%;
+width: 110px;
+height: auto;
+
+}
+
+
+.contenedortext{
+
+  margin-top: 7%;
+}
+
+.logininfo{
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  margin-top: 1vh;
+  text-align: left;
+  margin-left: 1%;
+}
+
+.boton {
+  margin-top: 6%;
+}
+
+.boton:hover{
+      background-color: blueviolet;
+}
+
+.itext{
+  margin-top: 3%;
+}
+
+.form-group{
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+
 :root {
   --bs-blue: #007bff;
   --bs-indigo: #6610f2;

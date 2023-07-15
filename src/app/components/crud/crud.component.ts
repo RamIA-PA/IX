@@ -1,14 +1,10 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-
-import { FirebaseCodeErrorService } from 'src/app/services/firebase-code-error.service';
-import { ToastrService } from 'ngx-toastr';
-
-
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
-
+import { getFirestore, collection, query, where, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-crud',
@@ -19,73 +15,120 @@ export class CrudComponent implements OnInit {
 
   loading: boolean = false;
   items$: Observable<any[]>;
-
+  usuarioActual: any;
+  editarIdDocumento: string = "";
+  datosUsuarioForm!: FormGroup;
 
   constructor(
     private afAuth: AngularFireAuth,
-      private router: Router,
-      private firestore: AngularFirestore,
-      private service: FirebaseCodeErrorService,
-      private toastr: ToastrService
-
+    private router: Router,
+    private firestore: AngularFirestore
   ) {
-
     const collectionRef = this.firestore.collection('usuarios');
-
-    // Realiza la consulta y asigna el resultado a la propiedad items$
     this.items$ = collectionRef.valueChanges();
 
-   }
-
-
-
-
-
-  dataUser: any;
-
-
+    this.afAuth.authState.subscribe((usuario) => {
+      this.usuarioActual = usuario;
+    });
+  }
 
   ngOnInit(): void {
+    this.datosUsuarioForm = new FormGroup({
+      nombre: new FormControl(''),
+      apellido: new FormControl(''),
+      email: new FormControl(''),
+      horas: new FormControl('')
+    });
+
+    /*
     this.afAuth.currentUser.then(user => {
-      if(user && user.emailVerified) {
+      if(user) {
         this.dataUser = user;
         console.log(user)
       } else {
         this.router.navigate(['/login']);
       }
     })
+    */
   }
 
   logOut() {
     this.afAuth.signOut().then(() => this.router.navigate(['/login']));
   }
 
-  eliminarUsuario(usuario: any) {
-    const documentRef = this.firestore.collection('usuarios').doc(usuario.id);
 
-    documentRef.delete()
-      .then(() => {
-        console.log('Usuario eliminado exitosamente.');
+modalAbierto: boolean = false;
+abrirModalEdicion(uid: string, usuario: any) {
+  const usuariosCollectionRef = this.firestore.collection('usuarios');
+  const queryRef = usuariosCollectionRef.ref.where('UID', '==', uid);
+
+  queryRef.get()
+    .then((querySnapshot) => {
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach((doc) => {
+          const id = doc.id; 
+          console.log('ID del documento:', id);  
+          this.editarIdDocumento = id; 
+          this.datosUsuarioForm.patchValue(usuario);
+          this.modalAbierto = true;
+        });
+      } else {
+        console.error('No se encontró el documento con el UID:', uid);
+      }
+    })
+    .catch((error) => {
+      console.error('Error al obtener el documento:', error);
+    });
+}
+
+
+
+
+cerrarModal() {
+  this.modalAbierto = false;
+}
+
+
+
+  eliminarDato(uid: string) {
+    const firestore = getFirestore();
+    const usuariosCollectionRef = collection(firestore, 'usuarios');
+    const queryRef = query(usuariosCollectionRef, where('UID', '==', uid));
+
+    getDocs(queryRef)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const id = doc.id;  
+          console.log('ID del documento a eliminar:', id);  
+
+          deleteDoc(doc.ref)
+            .then(() => {
+              console.log('Dato eliminado correctamente.');
+            })
+            .catch((error) => {
+              console.error('Error al eliminar el dato:', error);
+            });
+        });
       })
       .catch((error) => {
-        console.error('Error al eliminar el usuario:', error);
+        console.error('Error al obtener el dato:', error);
       });
   }
 
 
-
-
-  eliminar(UID: string) {
-    console.log('ID del usuario a eliminar:', UID);
-    this.service.eliminarUser(UID).then(() => {
-      console.log('Usuario eliminado con éxito');
-      this.toastr.error('El usuario fue eliminado con éxito', 'Registro eliminado!', {
-        positionClass: 'toast-bottom-right'
+  guardarCambios() {
+    const documentoRef = this.firestore.collection('usuarios').doc(this.editarIdDocumento);
+    const datosUsuario = this.datosUsuarioForm.value;
+  
+    documentoRef.update(datosUsuario)
+      .then(() => {
+        console.log('Datos de usuario actualizados correctamente.');
+        this.cerrarModal(); 
+      })
+      .catch((error) => {
+        console.error('Error al actualizar los datos del usuario:', error);
       });
-    }).catch(error => {
-      console.log('Error al eliminar el usuario:', error);
-    });
   }
-
-
+  
 }
+

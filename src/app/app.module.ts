@@ -13,14 +13,18 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegistrarUsuarioComponent } from './components/registrar-usuario/registrar-usuario.component';
-import { VerificarCorreoComponent } from './components/verificar-correo/verificar-correo.component';
-import { RecuperarPasswordComponent } from './components/recuperar-password/recuperar-password.component';
+
 import { SpinnerComponent } from './shared/spinner/spinner.component';
 
 import { CrudComponent } from './components/crud/crud.component';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
 import { provideFirestore,getFirestore } from '@angular/fire/firestore';
+import { AgregarHorasComponent } from './components/agregar-horas/agregar-horas.component';
+
+import { FormsModule } from '@angular/forms';
+
+
 
 @NgModule({
   declarations: [
@@ -28,13 +32,15 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
     LoginComponent,
     DashboardComponent,
     RegistrarUsuarioComponent,
-    VerificarCorreoComponent,
-    RecuperarPasswordComponent,
+
     SpinnerComponent,
     CrudComponent,
+    AgregarHorasComponent,
+    
 
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,

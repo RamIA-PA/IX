@@ -33,12 +33,15 @@ export class LoginComponent implements OnInit {
     const email = this.loginUsuario.value.email;
     const password = this.loginUsuario.value.password;
 
-    this.loading = true;
+    
     this.afAuth.signInWithEmailAndPassword(email, password).then((user) => {
-      if(user.user?.emailVerified) {
+      if(user.user) {
+        setTimeout(() => {
+          this.loading = true;
         this.router.navigate(['/dashboard']);
+        }, 500);
       } else {
-        this.router.navigate(['/verificar-correo']);
+        console.log("No existes");
       }
     }).catch((error) => {
       this.loading = false;

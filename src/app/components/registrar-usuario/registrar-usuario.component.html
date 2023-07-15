@@ -36,6 +36,10 @@
             <span *ngIf="registrarUsuario.get('apellido')?.hasError('minlength') && registrarUsuario.get('apellido')?.touched" class="text-danger errorLabel">
               El <strong>apellido</strong> debe tener al menos 2 caracteres
           </span>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" formControlName="cedula" placeholder="cedula">
+            <label>cedula</label>
+        </div>
 
 
         </div>
@@ -62,11 +66,11 @@
 
         </div>
             <div class="d-grid gap-2 mb-3">
-                <button (click)="agregarDato()" class="btn btn-primary btn-lg"  type="submit">Aceptar</button>
+                <button class="btn btn-primary btn-lg"  type="submit">Aceptar</button>
             </div>
 
 
-            <a routerLink="/login">Volver</a>
+            <a routerLink="/Dashboard">Volver</a>
         </form>
     </div>
     <app-spinner *ngIf="loading"></app-spinner>

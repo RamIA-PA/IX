@@ -43,25 +43,6 @@ export class FirebaseCodeErrorService {
     return this.firestore.collection('usuarios', ref => ref.orderBy('fechaCreacion', 'asc')).snapshotChanges();
   }
 
-  eliminarUser(id: string): Promise<any> {
-    return this.firestore.collection('usuarios').doc(id).delete();
-  }
-
-/*
-  deletePlace(place: Place) {
-    const placeDocRef = doc(this.firestore, `places/${place.id}`);
-    return deleteDoc(placeDocRef);
-  }
-
-  */
-
-  getusuariosid(id: string): Observable<any> {
-    return this.firestore.collection('usuarios').doc(id).snapshotChanges();
-  }
-
-  actualizarusuarios(id: string, data:any): Promise<any> {
-    return this.firestore.collection('usuarios').doc(id).update(data);
-  }
 
 
 }

@@ -14,10 +14,6 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 export class RegistrarUsuarioComponent implements OnInit {
   registrarUsuario: FormGroup;
   loading: boolean = false;
-  dataUser: any;
-
-
-
 
   constructor(
     private fb: FormBuilder,
@@ -29,43 +25,34 @@ export class RegistrarUsuarioComponent implements OnInit {
   ) {
     this.registrarUsuario = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      cedula: ['', [Validators.required, Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       repetirPassword: ['', Validators.required],
       nombre: ['', [Validators.required, Validators.minLength(2)]],
       apellido: ['', [Validators.required, Validators.minLength(2)]],
       horas: [{ value: 0, disabled: true }, Validators.required],
-      UID: [{ value:this.uid, disabled: true }, Validators.required],
+      actividad: [{ value: 'cre', disabled: true }, Validators.required],
+      descripcion: [{ value: 'cre', disabled: true }, Validators.required],
+      UID: ['', Validators.required],
     });
+  }
 
-    this.afAuth.authState.subscribe((user) => {
+  ngOnInit(): void {
+    this.afAuth.currentUser.then((user) => {
       if (user) {
-        this.uid = user.uid;
-        this.registrarUsuario?.get('UID')?.setValue(this.uid);
+        console.log(user);
       } else {
-        this.uid = null;
-        this.registrarUsuario?.get('UID')?.setValue('null');
+        this.router.navigate(['/login']);
       }
     });
-
   }
-  uid: any;
 
-  ngOnInit(): void {}
-
-
-
-
-
-  registrar() {
-
-
-
+  async registrar() {
     const email = this.registrarUsuario.value.email;
     const password = this.registrarUsuario.value.password;
-    const repetirPassowrd = this.registrarUsuario.value.repetirPassword;
+    const repetirPassword = this.registrarUsuario.value.repetirPassword;
 
-    console.log(this.registrarUsuario);
-    if (password !== repetirPassowrd) {
+    if (password !== repetirPassword) {
       this.toastr.error(
         'Las contraseñas ingresadas deben ser las mismas',
         'Error'
@@ -74,56 +61,63 @@ export class RegistrarUsuarioComponent implements OnInit {
     }
 
     this.loading = true;
-    this.afAuth
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        this.verificarCorreo();
-      })
-      .catch((error) => {
-        this.loading = false;
-        this.toastr.error(this.firebaseError.codeError(error.code), 'Error');
-      });
+
+    try {
+      // Crear el usuario en Firebase Authentication
+      const userCredential = await this.afAuth.createUserWithEmailAndPassword(
+        email,
+        password
+      );
+      const uid = userCredential.user?.uid;
+
+      // Generar un nuevo UID y verificar su disponibilidad
+      let newUID = this.generateUID();
+      while (await this.checkUIDExists(newUID)) {
+        newUID = this.generateUID();
+      }
+
+      // Asignar el UID generado al campo "UID" en el formulario
+      this.registrarUsuario.get('UID')?.setValue(newUID);
+
+      // Agregar los datos en Firestore con el nuevo UID
+      const collectionRef = this.firestore.collection<any>('usuarios');
+      const data = {
+        email: this.registrarUsuario.value.email,
+        password: this.registrarUsuario.value.password,
+        repetirPassword: this.registrarUsuario.value.repetirPassword,
+        nombre: this.registrarUsuario.value.nombre,
+        apellido: this.registrarUsuario.value.apellido,
+        horas: this.registrarUsuario.value.horas || 0,
+        actividad: this.registrarUsuario.value.actividad || 'cre',
+        descripcion: this.registrarUsuario.value.descripcion || 'cre',
+        UID: newUID,
+        cedula: this.registrarUsuario.value.cedula,
+      };
+
+      await collectionRef.doc(uid).set(data);
+
+      console.log('Registro exitoso');
+      this.router.navigate(['/crud']);
+    } catch (error: any) {
+      this.loading = false;
+      this.toastr.error(
+        this.firebaseError.codeError(error.code),
+        'Error al registrar'
+      );
+    }
   }
 
-  verificarCorreo() {
-    this.afAuth.currentUser
-      .then((user) => user?.sendEmailVerification())
-      .then(() => {
-        this.toastr.info(
-          'Le enviamos un correo electronico para su verificacion',
-          'Verificar correo'
-        );
-        this.router.navigate(['/login']);
-      });
+  generateUID(): string {
+    // Generar un número aleatorio único
+    const uid = Math.floor(Math.random() * 1000000).toString();
+    return uid;
   }
 
+  async checkUIDExists(uid: string): Promise<boolean> {
+    const collectionRef = this.firestore.collection<any>('usuarios');
+    const query = collectionRef.ref.where('UID', '==', uid).limit(1);
 
-
-  agregarDato() {
-    // Obtén una referencia a la colección en Firestore donde deseas escribir los datos
-    const collectionRef = this.firestore.collection('usuarios');
-
-    // Crea un objeto con los valores del formulario
-    const data = {
-      email: this.registrarUsuario.value.email,
-      password: this.registrarUsuario.value.password,
-      repetirPassword: this.registrarUsuario.value.repetirPassword,
-      nombre: this.registrarUsuario.value.nombre,
-      apellido: this.registrarUsuario.value.apellido,
-      horas: this.registrarUsuario.value.horas || 0, // Establece un valor predeterminado de 0 si el campo es undefined
-      UID: this.registrarUsuario.value.UID || this.uid
-    };
-
-    // Agrega los datos a la colección en Firestore
-    collectionRef.add(data)
-      .then(() => {
-        console.log('Datos agregados exitosamente.');
-      })
-      .catch((error) => {
-        console.error('Error al agregar datos:', error);
-      });
+    const snapshot = await query.get();
+    return !snapshot.empty;
   }
-
-
-
 }

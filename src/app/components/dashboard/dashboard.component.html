@@ -26,7 +26,7 @@
         </li>
 
 
-
+        <div *ngIf="mostrarDiv">
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Admin</span>
         </li>
@@ -38,14 +38,14 @@
           </a>
           <ul class="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
             <li class="w-100">
-                <a   class="nav-link px-350"> <span routerLink="/crud" class="d-none d-sm-inline">CRUD</span>1</a>
+                <a   class="nav-link px-350"> <span routerLink="/crud" class="d-none d-sm-inline">CRUD</span></a>
             </li>
             <li>
-                <a  class="nav-link px-350"> <span class="d-none d-sm-inline">CRUD</span> 2 </a>
+                <a  class="nav-link px-350"> <span routerLink="/registrar-usuario" class="d-none d-sm-inline">Registro</span></a>
             </li>
         </ul>
         </li>
-
+      </div>
 
         <!-- Components -->
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
@@ -83,6 +83,25 @@
             class="menu-link"
           >
             <div data-i18n="Documentation">Fotos de estudiantes</div>
+
+
+
+            
+          </a>
+        </li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">...</span></li>
+        
+        <li class="menu-item">
+          <a
+          (click)="logOut()"
+          
+            class="menu-link"
+          >
+            <div data-i18n="Documentation" >cerrarSesion</div>
+
+
+
+           
           </a>
         </li>
       </ul>
@@ -122,12 +141,12 @@
 
 
             <!-- User -->
-
-
+              
+            
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
               <a class="nav-link dropdown-toggle hide-arrow"  data-bs-toggle="dropdown">
                 <div class="avatar avatar-online">
-                  <img src="./assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                  <img  alt class="w-px-40 h-auto rounded-circle" />
                 </div>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
