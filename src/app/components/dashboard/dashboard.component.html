@@ -87,7 +87,7 @@
             
           </a>
         </li>
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">...</span></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Salir</span></li>
         
         <li class="menu-item">
           <a
@@ -95,7 +95,7 @@
           
             class="menu-link"
           >
-            <div data-i18n="Documentation" style="color: red;" >cerrarSesion</div>
+            <div data-i18n="Documentation" style="color: red;" >Cerrar Sesion</div>
 
 
 
@@ -122,17 +122,7 @@
 
         <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
           <!-- Search -->
-          <div class="navbar-nav align-items-center">
-            <div class="nav-item d-flex align-items-center">
-              <i class="bx bx-search fs-4 lh-0"></i>
-              <input
-              type="text"
-              class="form-control border-0 shadow-none"
-              placeholder="Search..."
-              aria-label="Search..."
-            />
-            </div>
-          </div>
+          
           <!-- /Search -->
 
           <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -141,39 +131,7 @@
             <!-- User -->
               
             
-            <li class="nav-item navbar-dropdown dropdown-user dropdown">
-              <a class="nav-link dropdown-toggle hide-arrow"  data-bs-toggle="dropdown">
-                <div class="avatar avatar-online">
-                  <img  alt class="w-px-40 h-auto rounded-circle" />
-                </div>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                  <a class="dropdown-item " href="#">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar avatar-online">
-                          <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <span class="fw-semibold d-block">Brian Ram</span>
-                        <small class="text-muted">Admin</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li>
-                  <div class="dropdown-divider"></div>
-                </li>
-                <li>
-                  <a class="dropdown-item">
-                    <i class="bx bx-power-off me-2"></i>
-                    <span  class="align-middle">Log Out</span>
-                  </a>
-                </li>
-              </ul>
-            </li>
+          
             <!--/ User -->
           </ul>
         </div>
@@ -214,36 +172,18 @@
               <div class="row">
                 <div class="col-lg-6 col-md-12 col-6 mb-4">
                   <div class="card">
+
                     <div class="card-body">
                       <div class="card-title d-flex align-items-start justify-content-between">
                         <div class="avatar flex-shrink-0">
-                          <img
-                            src="../assets/img/icons/unicons/chart-success.png"
-                            alt="chart success"
-                            class="rounded"
-                          />
-                        </div>
-                        <div class="dropdown">
-                          <button
-                            class="btn p-0"
-                            type="button"
-                            id="cardOpt3"
-                            data-bs-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i class="bx bx-dots-vertical-rounded"></i>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                          </div>
+                          <img src="../assets/img/icons/unicons/chart-success.png" alt="chart success" class="rounded" />
                         </div>
                       </div>
                       <span class="fw-semibold d-block mb-1">Horas</span>
-                      <h3 class="card-title mb-2">0:00</h3>
-                      <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> 00.00%</small>
+                      <h3 class="card-title mb-2">{{ horasAcumuladas }}:00</h3>
+                      <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> {{ porcentaje }}%</small>
                     </div>
+                    
                   </div>
                 </div>
 
@@ -278,72 +218,33 @@
                 <div class="card-body">
                   <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex flex-column align-items-center gap-1">
-                      <h2 class="mb-2">0:00</h2>
+                      <h2 class="card-title mb-2">{{ horasAcumuladas }}:00</h2>
                       <span>Total horas</span>
+
                     </div>
                     <div id="orderStatisticsChart"></div>
                   </div>
                   <ul class="p-0 m-0">
-                    <li class="d-flex mb-4 pb-1">
-                      <div class="avatar flex-shrink-0 me-3">
-                        <span class="avatar-initial rounded bg-label-primary"
-                          ><i class="bx bx-mobile-alt"></i
-                        ></span>
-                      </div>
-                      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                        <div class="me-2">
-                          <h6 class="mb-0">evento 1</h6>
-                          <small class="text-muted">descripcion evento 1</small>
-                        </div>
-                        <div class="user-progress">
-                          <small class="fw-semibold">10:00</small>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="d-flex mb-4 pb-1">
+                    
+                    
+                    <li class="d-flex mb-4 pb-1"  *ngFor="let usuario of usuarios">
                       <div class="avatar flex-shrink-0 me-3">
                         <span class="avatar-initial rounded bg-label-success"><i class="bx bx-closet"></i></span>
                       </div>
                       <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                         <div class="me-2">
-                          <h6 class="mb-0">evento 2</h6>
-                          <small class="text-muted">descripcion evento 2</small>
+                          <h6 class="mb-0">{{ usuario.actividad }}</h6>
+                          <small class="text-muted">{{ usuario.descripcion }}</small>
                         </div>
                         <div class="user-progress">
-                          <small class="fw-semibold">10:00</small>
+                          <small class="fw-semibold">{{ usuario.horas }}</small>
                         </div>
                       </div>
                     </li>
-                    <li class="d-flex mb-4 pb-1">
-                      <div class="avatar flex-shrink-0 me-3">
-                        <span class="avatar-initial rounded bg-label-info"><i class="bx bx-home-alt"></i></span>
-                      </div>
-                      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                        <div class="me-2">
-                          <h6 class="mb-0">evento 3</h6>
-                          <small class="text-muted">descripcion evento 3</small>
-                        </div>
-                        <div class="user-progress">
-                          <small class="fw-semibold">10:00</small>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="d-flex">
-                      <div class="avatar flex-shrink-0 me-3">
-                        <span class="avatar-initial rounded bg-label-secondary"
-                          ><i class="bx bx-football"></i
-                        ></span>
-                      </div>
-                      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                        <div class="me-2">
-                          <h6 class="mb-0">evento 4</h6>
-                          <small class="text-muted">descripcion evento 4</small>
-                        </div>
-                        <div class="user-progress">
-                          <small class="fw-semibold">10:00</small>
-                        </div>
-                      </div>
-                    </li>
+
+
+
+                    
                   </ul>
                 </div>
               </div>

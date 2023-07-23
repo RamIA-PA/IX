@@ -20,16 +20,15 @@ export class AgregarHorasComponent implements OnInit {
   cedulas: Observable<any[]> | undefined;
   cedulaSeleccionada: string = "";
   UIDSeleccionado: string = "";
+
   constructor(
     private route: ActivatedRoute,
-
     private afAuth: AngularFireAuth,
-      private router: Router,
-      private firestore: AngularFirestore,
-      private service: FirebaseCodeErrorService,
-      private toastr: ToastrService,
-      private fb: FormBuilder,
-
+    private router: Router,
+    private firestore: AngularFirestore,
+    private service: FirebaseCodeErrorService,
+    private toastr: ToastrService,
+    private fb: FormBuilder
   ) {
     this.agregar = this.fb.group({
       UID: [{ value: '', disabled: false }, Validators.required],
@@ -38,41 +37,83 @@ export class AgregarHorasComponent implements OnInit {
       nombre: [{ value: '', disabled: false }, Validators.required],
       apellido: [{ value: '', disabled: false }, Validators.required],
       horas: [{ value: 0, disabled: false }, Validators.required],
-      actividad: [{ value: '', disabled: false }, Validators.required],
-      descripcion: [{ value: '', disabled: false }, Validators.required],
+      actividad: [{ value: '', disabled: false }, Validators.required, ],
+      descripcion: [{ value: '', disabled: false }, Validators.required, ],
     });
-
 
     this.afAuth.authState.subscribe((usuario) => {
       this.usuarioActual = usuario;
-      
     });
-
-   }
-
+  }
 
   ngOnInit(): void {
     this.cedulas = this.firestore.collection('usuarios').valueChanges();
 
     this.afAuth.currentUser.then(user => {
-      if(user) {
+      if (user) {
         this.dataUser = user;
-        console.log(user)
+        console.log(user);
       } else {
         this.router.navigate(['/login']);
       }
-    })
+    });
   }
 
+
+
+
+  seleccionarCedula(event: Event) {
+    const cedula = (event.target as HTMLSelectElement).value;
   
+    if (cedula) {
+      this.firestore.collection('usuarios', ref => ref.where('cedula', '==', cedula))
+        .valueChanges()
+        .subscribe((resultados: any[]) => {
+          if (resultados.length > 0) {
+            const usuario = resultados[0];
+            console.log('Usuario encontrado:', usuario);
+  
+            
+            this.agregar.get('UID')?.setValue(usuario.UID);
+            this.agregar.get('email')?.setValue(usuario.email);
+            this.agregar.get('nombre')?.setValue(usuario.nombre);
+            this.agregar.get('apellido')?.setValue(usuario.apellido);
+  
+            this.UIDSeleccionado = usuario.UID; 
+          } else {
+            console.log('Usuario no encontrado');
+            this.agregar.get('UID')?.setValue('');
+            this.agregar.get('email')?.setValue('a');
+            this.agregar.get('nombre')?.setValue('a');
+            this.agregar.get('apellido')?.setValue('a');
+  
+            this.UIDSeleccionado = '';  
+          }
+        });
+    } else {
+      this.agregar.get('UID')?.setValue('a');
+      this.agregar.get('email')?.setValue('a');
+      this.agregar.get('nombre')?.setValue('a');
+      this.agregar.get('apellido')?.setValue('a');
+  
+      this.UIDSeleccionado = ''; 
+    }
+  }
+  
+
+
+  generateUID(): string {
+    const uid = Math.floor(Math.random() * 1000000).toString();
+    return uid;
+  }
 
   agregarDatos() {
     if (this.agregar.valid) {
+      console.log(this.agregar.value)
       const datos = this.agregar.value;
-      
       this.firestore.collection('usuarios').add(datos)
         .then(() => {
-          // Navega al componente deseado después de agregar los datos
+          
           this.router.navigate(['/crud']);
         })
         .catch(error => {
@@ -82,43 +123,5 @@ export class AgregarHorasComponent implements OnInit {
       console.error('Formulario inválido. Verifica los campos.');
     }
   }
-
-  seleccionarCedula(event: Event) {
-    const cedula = (event.target as HTMLSelectElement).value;
-  
-    if (cedula) {
-      this.firestore.collection('usuarios', ref => ref.where('cedula', '==', cedula))
-        .valueChanges()
-        .subscribe((resultados: any[]) => {
-          console.log('Resultados:', resultados);
-  
-          if (resultados.length > 0) {
-            console.log('UID encontrado:', resultados[0].UID);
-            this.agregar.get('UID')?.setValue(resultados[0].UID);
-            this.UIDSeleccionado = resultados[0].UID; // Asignar el valor del UID a la propiedad UIDSeleccionado
-          } else {
-            this.firestore.collection('usuarios', ref => ref.where('cedula', '==', 'undefined'))
-              .valueChanges()
-              .subscribe((resultadosUndefined: any[]) => {
-                if (resultadosUndefined.length > 0) {
-                  console.log('UID encontrado para cédula sin UID:', resultadosUndefined[0].UID);
-                  this.agregar.get('UID')?.setValue(resultadosUndefined[0].UID);
-                  this.UIDSeleccionado = resultadosUndefined[0].UID; // Asignar el valor del UID a la propiedad UIDSeleccionado
-                } else {
-                  console.log('UID no encontrado');
-                  this.agregar.get('UID')?.setValue('');
-                  this.UIDSeleccionado = ''; // Asignar una cadena vacía a la propiedad UIDSeleccionado
-                }
-              });
-          }
-        });
-    } else {
-      this.agregar.get('UID')?.setValue('');
-      this.UIDSeleccionado = ''; // Asignar una cadena vacía a la propiedad UIDSeleccionado
-    }
-  }
-  
-  
-  
   
 }

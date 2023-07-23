@@ -16,7 +16,7 @@
 
             </div>
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" formControlName="nombre" placeholder="Brian">
+              <input type="text" class="form-control" formControlName="nombre" placeholder="Brian"  pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ]+$">
               <label>Nombre</label>
               <span *ngIf="registrarUsuario.get('nombre')?.hasError('required') && registrarUsuario.get('nombre')?.touched" class="text-danger errorLabel">
                   El <strong>nombre</strong> es requerido
@@ -24,11 +24,14 @@
               <span *ngIf="registrarUsuario.get('nombre')?.hasError('minlength') && registrarUsuario.get('nombre')?.touched" class="text-danger errorLabel">
                 El <strong>nombre</strong> debe tener al menos 2 caracteres
             </span>
+            <span *ngIf="registrarUsuario.get('nombre')?.hasError('pattern') && registrarUsuario.get('nombre')?.touched" class="text-danger errorLabel">
+                El <strong>Nombre</strong> solo tiene texto
+            </span>
 
 
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" formControlName="apellido" placeholder="Ram">
+            <input type="text" class="form-control" formControlName="apellido" placeholder="Ram"  pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ]+$">
             <label>Apellido</label>
             <span *ngIf="registrarUsuario.get('apellido')?.hasError('required') && registrarUsuario.get('apellido')?.touched" class="text-danger errorLabel">
                 El <strong>apellido</strong> es requerido
@@ -36,10 +39,18 @@
             <span *ngIf="registrarUsuario.get('apellido')?.hasError('minlength') && registrarUsuario.get('apellido')?.touched" class="text-danger errorLabel">
               El <strong>apellido</strong> debe tener al menos 2 caracteres
           </span>
+          <span *ngIf="registrarUsuario.get('apellido')?.hasError('pattern') && registrarUsuario.get('apellido')?.touched" class="text-danger errorLabel">
+            El <strong>Apellido</strong> solo tiene texto
+        </span>
+          <br>
           <div class="form-floating mb-3">
             <input type="text" class="form-control" formControlName="cedula" placeholder="cedula">
             <label>cedula</label>
-        </div>
+            <span *ngIf="registrarUsuario.get('cedula')?.hasError('pattern') && registrarUsuario.get('cedula')?.touched" class="text-danger errorLabel">
+                La <strong>cedula</strong> no cumple con el formato 0-000-000
+            </span>
+          </div>
+          
 
 
         </div>
@@ -70,7 +81,7 @@
             </div>
 
 
-            <a routerLink="/Dashboard">Volver</a>
+            <a routerLink="/dashboard">Volver</a>
         </form>
     </div>
     <app-spinner *ngIf="loading"></app-spinner>
