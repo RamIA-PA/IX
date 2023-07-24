@@ -23,6 +23,7 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 import { AgregarHorasComponent } from './components/agregar-horas/agregar-horas.component';
 
 import { FormsModule } from '@angular/forms';
+import { GaleriaComponent } from './components/galeria/galeria.component';
 
 
 
@@ -36,6 +37,7 @@ import { FormsModule } from '@angular/forms';
     SpinnerComponent,
     CrudComponent,
     AgregarHorasComponent,
+    GaleriaComponent,
     
 
   ],
