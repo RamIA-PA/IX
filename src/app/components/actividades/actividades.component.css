@@ -1,0 +1,34 @@
+
+    .scroll {
+        width: 100%;
+        overflow-x: auto;
+        display: flex;
+        align-items: center;
+        margin: 50px 0;
+    }
+
+    .evento {
+        flex: 0 0 auto;
+        width: 30rem;
+        height: max-content;
+        line-height: 30px;
+        text-align: center;
+        margin-right: 4.5rem;
+        padding: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin: 2px;
+    }
+
+    .evento img {
+        height: max-content;
+        display: block;
+        margin: 1 auto;
+        max-height: 15rem;
+    }
+
+
+    .evento button{
+      margin-left: 100%;
+    }
+

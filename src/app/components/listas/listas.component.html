@@ -1,0 +1,68 @@
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Aside -->
+            <div class="col-md-2 p-4 text-bg-dark" style="background-color: #333; color: white;">
+                <a (click)="nav()" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                    <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                    <span class="fs-4">Volver al calendario</span>
+                </a>
+                <hr>
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" aria-current="page">
+                            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                            Pagina de inicio
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white">
+                            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                          Nueva actividad
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white">
+                            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                            Editar actividad
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white">
+                            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                            delete actividad
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                      <!-- Agregar el evento click directamente en el enlace <a> -->
+                      <a class="nav-link text-white" (click)="finalizarActividad()">
+                        <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                        finalizar acti
+                      </a>
+                    </li>
+                </ul>
+                <hr>
+
+            </div>
+
+           <!-- Listado -->
+    <div class="col-md-10 bg-light p-4">
+      <h1 class="content">Listado de participantes de la actividad</h1>
+      <ol id="lista-participantes" class="list-group list-group-numbered">
+        <li class="list-group-item" *ngFor="let voluntario of participantes$ | async">
+          {{"Voluntario: " + voluntario.nombre + " " + voluntario.apellido + " " + voluntario.cedula + " | Correo: " + voluntario.email + " | Actividad: " + voluntario.actividad + " | Horas: " + voluntario.horas + " | apoyo: "}}
+          <input class="form-check-input" type="checkbox" [(ngModel)]="voluntario.checkboxMarcado" id="defaultCheck1">
+        </li>
+
+      </ol>
+
+
+      <div class="d-grid gap-2 mt-5">
+        <div class="d-grid gap-2 mt-5">
+          <button class="btn btn-dark" type="button" (click)="descargarListaComoPDF()">Imprimir lista de participantes</button>
+        </div>
+            </div>
+    </div>
+  </div>
+</div>

@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
   mostrarDiv: boolean = false;
   horasAcumuladas: number = 0;
   porcentaje: number = 0;
-  usuarios: Usuario[] = [];  
+  usuarios: Usuario[] = [];
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
@@ -39,7 +39,7 @@ export class DashboardComponent implements OnInit {
         this.dataUser = usuario;
         console.log(usuario);
 
-        
+
         this.firestore.collection<Usuario>('usuarios', ref => ref.where('email', '==', usuario.email))
           .get().subscribe((querySnapshot) => {
             let totalHoras = 0;
@@ -68,5 +68,9 @@ export class DashboardComponent implements OnInit {
 
   logOut() {
     this.afAuth.signOut().then(() => this.router.navigate(['/login']));
+  }
+
+  nav(){
+    this.router.navigate(["/actividad"])
   }
 }

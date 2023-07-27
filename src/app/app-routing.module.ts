@@ -6,6 +6,8 @@ import { LoginComponent } from './components/login/login.component';
 import { CrudComponent } from './components/crud/crud.component';
 import { RegistrarUsuarioComponent } from './components/registrar-usuario/registrar-usuario.component';
 import { AgregarHorasComponent } from './components/agregar-horas/agregar-horas.component';
+import { ActividadesComponent } from './components/actividades/actividades.component';
+import { ListasComponent } from './components/listas/listas.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -14,6 +16,8 @@ const routes: Routes = [
 
 
   { path: 'crud', component: CrudComponent },
+  { path: 'listas', component: ListasComponent },
+  { path: 'actividad', component: ActividadesComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'agregar', component: AgregarHorasComponent },
   { path: '**', redirectTo: 'login', pathMatch: 'full' },

@@ -24,6 +24,8 @@ import { AgregarHorasComponent } from './components/agregar-horas/agregar-horas.
 
 import { FormsModule } from '@angular/forms';
 import { GaleriaComponent } from './components/galeria/galeria.component';
+import { ActividadesComponent } from './components/actividades/actividades.component';
+import { ListasComponent } from './components/listas/listas.component';
 
 
 
@@ -38,6 +40,8 @@ import { GaleriaComponent } from './components/galeria/galeria.component';
     CrudComponent,
     AgregarHorasComponent,
     GaleriaComponent,
+    ActividadesComponent,
+    ListasComponent,
     
 
   ],

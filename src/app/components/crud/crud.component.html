@@ -4,7 +4,7 @@
       <span class="h3">Listado de Estudiantes</span>
       <br>
       <br>
-      <button class="btn btn-dark btn-lg float-right" routerLink="/agregar">Agregar</button>
+
 
       <table class="table table-striped mt-5">
         <thead>
@@ -26,7 +26,7 @@
             <td>{{ usuarios.email }}</td>
             <td>{{ usuarios.horas }}</td>
             <td>{{ usuarios.actividad }}</td>
-          
+
             <td>
               <button class="btn btn-danger" (click)="abrirModalConfirmacionEliminar(usuarios.UID)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
