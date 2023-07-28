@@ -4,7 +4,7 @@
       <h2 class="text-center mb-4 mt-5">Actividades del mes</h2>
 
       <div class="d-flex justify-content-between mb-2">
-        <button class="btn btn-primary">&lt; Anterior</button>
+        <button (click)="n()" class="btn btn-primary">&lt; Anterior</button>
         <h4 id="mesActual">Agosto</h4>
         <button class="btn btn-primary">Siguiente &gt;</button>
       </div>
@@ -185,4 +185,7 @@
     </div>
   </div>
 </div>
+<div *ngIf="mostrarDiv">
+
 <a class="btn btn-info" (click)="nav()" role="button" target="_blank">Listado de participantes</a>
+</div>

@@ -49,7 +49,7 @@ export class ListasComponent implements OnInit {
   checkboxMarcado: boolean = false;
 
   participantes: VoluntarioParaProtocolo[] = [];
-  participantesConCheckboxActivo: VoluntarioParaProtocolo[] = []; 
+  participantesConCheckboxActivo: VoluntarioParaProtocolo[] = [];
 
   nuevaActividad: NuevaActividad = { nombre: '', descripcion: '', horas: 0 };
 
@@ -83,6 +83,11 @@ export class ListasComponent implements OnInit {
       if (user) {
         this.dataUser = user;
         console.log(user);
+        if(user.uid == "H1vrgH7AJ3aAVZbpQ3lNf75qqbb2"){
+          console.log("todo bem")
+        }else{
+          this.router.navigate(['/login']);
+        }
       } else {
         this.router.navigate(['/login']);
       }
@@ -112,7 +117,7 @@ export class ListasComponent implements OnInit {
         map((actions) => {
           return actions.map((action) => {
             const data = action.payload.doc.data() as VoluntarioParaProtocolo;
-            const id = action.payload.doc.id;  
+            const id = action.payload.doc.id;
             return { id, ...data };
           });
         })

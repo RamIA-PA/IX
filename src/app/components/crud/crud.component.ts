@@ -48,13 +48,23 @@ export class CrudComponent implements OnInit {
       if (user) {
         this.dataUser = user;
         console.log(user);
+        if(user.uid == "H1vrgH7AJ3aAVZbpQ3lNf75qqbb2"){
+          console.log("todo bem")
+        }else{
+          this.router.navigate(['/login']);
+        }
       } else {
         this.router.navigate(['/login']);
       }
     });
 
-   
+
+
+
+
   }
+
+
 
   logOut() {
     this.afAuth.signOut().then(() => this.router.navigate(['/login']));
@@ -88,7 +98,7 @@ export class CrudComponent implements OnInit {
   }
 
 
-idDocumentoAEliminar: string = ""; 
+idDocumentoAEliminar: string = "";
 
 
 abrirModalConfirmacionEliminar(uid: string) {
@@ -100,8 +110,8 @@ abrirModalConfirmacionEliminar(uid: string) {
       if (!querySnapshot.empty) {
         querySnapshot.forEach((doc) => {
           const id = doc.id;
-          console.log('ID del documento:', id); 
-          this.idDocumentoAEliminar = id;  
+          console.log('ID del documento:', id);
+          this.idDocumentoAEliminar = id;
           this.modalEliminarAbierto = true;
 
         });
@@ -120,16 +130,16 @@ abrirModalConfirmacionEliminar(uid: string) {
   }
 
   eliminarUsuario() {
-    const idDocumento = this.idDocumentoAEliminar;  
-    console.log('ID del documento a eliminar:', idDocumento);  
-  
- 
+    const idDocumento = this.idDocumentoAEliminar;
+    console.log('ID del documento a eliminar:', idDocumento);
+
+
     if (!idDocumento) {
       console.error('ID del documento a eliminar no especificado.');
       return;
     }
-  
- 
+
+
     this.firestore.collection('usuarios').doc(idDocumento).delete()
       .then(() => {
         this.modalEliminarAbierto = false;
@@ -141,9 +151,9 @@ abrirModalConfirmacionEliminar(uid: string) {
         console.error('Error al eliminar el usuario:', error);
       });
   }
-  
-  
-  
+
+
+
 
   guardarCambios() {
     const documentoRef = this.firestore.collection('usuarios').doc(this.editarIdDocumento);

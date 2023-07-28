@@ -5,6 +5,8 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActividadService, NuevaActividad } from 'src/app/actividad.service';
+import { v4 as uUIDv4 } from 'uuid';
+
 
 interface VoluntarioParaProtocolo {
   nombre: string;
@@ -76,6 +78,7 @@ export class ActividadesComponent implements OnInit {
   unirseAColeccionActividad(actividad: string, descripcion: string, horas: number) {
     const userEmail = this.dataUser.email;
     const nombreColeccion = actividad.toLowerCase().replace(/\s/g, '');
+    const UID = uUIDv4(); // Generar un UID único
 
     this.firestore
       .collection(nombreColeccion, (ref) => ref.where('email', '==', userEmail))
@@ -109,6 +112,7 @@ export class ActividadesComponent implements OnInit {
                             horas: horas,
                             actividad: actividad,
                             descripcion: descripcion,
+                            UID: UID
                           })
                           .then(() => {
                             console.log(`Usuario unido a la colección "${nombreColeccion}".`);
@@ -130,9 +134,12 @@ export class ActividadesComponent implements OnInit {
         }
       });
   }
-
   nav() {
     this.router.navigate(['/listas']);
+  }
+
+  n() {
+    this.router.navigate(['/dashboard']);
   }
 
   nuevasActividades: NuevaActividad[] = [];
