@@ -44,6 +44,15 @@ export class ActividadesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.afAuth.authState.subscribe((usuario) => {
+      this.usuarioActual = usuario;
+      this.actualizarVisibilidadDiv();
+
+    });
+
+
+
     this.obtenerNuevasActividades();
     this.afAuth.onAuthStateChanged((user) => {
       if (user) {
