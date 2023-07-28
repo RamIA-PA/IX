@@ -26,6 +26,7 @@ import { FormsModule } from '@angular/forms';
 import { GaleriaComponent } from './components/galeria/galeria.component';
 import { ActividadesComponent } from './components/actividades/actividades.component';
 import { ListasComponent } from './components/listas/listas.component';
+import { ActividadService } from './actividad.service';
 
 
 
@@ -54,7 +55,7 @@ import { ListasComponent } from './components/listas/listas.component';
     BrowserAnimationsModule, // required animations module
     ToastrModule.forRoot(), provideFirebaseApp(() => initializeApp(environment.firebase)), provideFirestore(() => getFirestore()), // ToastrModule added
   ],
-  providers: [],
+  providers:[ActividadService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

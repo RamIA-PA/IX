@@ -1,15 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-
 import { map } from 'rxjs/operators';
 
+import { ActividadService, NuevaActividad } from 'src/app/actividad.service';
 
+export interface NuevaActividad1 {
+  nombre: string;
+  descripcion: string;
+  horas: number;
+  checkboxMarcado: boolean;
+}
 
 interface VoluntarioParaProtocolo {
   nombre: string;
@@ -20,16 +26,14 @@ interface VoluntarioParaProtocolo {
   email: string;
   horas: number;
   checkboxMarcado: boolean;
-
 }
 
 @Component({
   selector: 'app-listas',
   templateUrl: './listas.component.html',
-  styleUrls: ['./listas.component.css']
+  styleUrls: ['./listas.component.css'],
 })
 export class ListasComponent implements OnInit {
-
   loading: boolean = false;
   items$: Observable<any[]>;
   usuarioActual: any;
@@ -38,21 +42,23 @@ export class ListasComponent implements OnInit {
   dataUser: any;
 
   modalAbierto: boolean = false;
-  modalEliminarAbierto: boolean = false;
   usuarioAEliminarIdDocumento: string = '';
 
   actividadSeleccionada: string | null = null;
   participantes$: Observable<VoluntarioParaProtocolo[]> | undefined;
   checkboxMarcado: boolean = false;
 
-
   participantes: VoluntarioParaProtocolo[] = [];
+  participantesConCheckboxActivo: VoluntarioParaProtocolo[] = []; 
+
+  nuevaActividad: NuevaActividad = { nombre: '', descripcion: '', horas: 0 };
 
   constructor(
     private route: ActivatedRoute,
     private afAuth: AngularFireAuth,
     private router: Router,
     private firestore: AngularFirestore,
+    private actividadesService: ActividadService
   ) {
     const collectionRef = this.firestore.collection('usuarios');
     this.items$ = collectionRef.valueChanges();
@@ -61,10 +67,8 @@ export class ListasComponent implements OnInit {
       this.usuarioActual = usuario;
     });
 
-    // Obtener el nombre de la actividad del query de navegación
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.actividadSeleccionada = params['actividad'];
-      // Obtener la lista de participantes de la actividad seleccionada
       if (this.actividadSeleccionada) {
         this.participantes$ = this.obtenerParticipantesPorActividad(this.actividadSeleccionada);
       }
@@ -72,7 +76,17 @@ export class ListasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.actividadSeleccionada)
+    console.log(this.actividadSeleccionada);
+
+
+    this.afAuth.onAuthStateChanged((user) => {
+      if (user) {
+        this.dataUser = user;
+        console.log(user);
+      } else {
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   descargarListaComoPDF() {
@@ -91,67 +105,66 @@ export class ListasComponent implements OnInit {
   }
 
   obtenerParticipantesPorActividad(nombreColeccion: string): Observable<VoluntarioParaProtocolo[]> {
-    return this.firestore.collection<VoluntarioParaProtocolo>(nombreColeccion).snapshotChanges()
+    return this.firestore
+      .collection<VoluntarioParaProtocolo>(nombreColeccion)
+      .snapshotChanges()
       .pipe(
-        map(actions => {
-          return actions.map(action => {
+        map((actions) => {
+          return actions.map((action) => {
             const data = action.payload.doc.data() as VoluntarioParaProtocolo;
-            const id = data.cedula; // Usamos la cédula como identificador único (ID)
+            const id = action.payload.doc.id;  
             return { id, ...data };
           });
         })
       );
   }
 
-
-
-
-  nav(){
-    this.router.navigate(["/actividad"])
+  nav() {
+    this.router.navigate(['/actividad']);
   }
 
+  cerrarModal() {
+    this.modalAbierto = false;
+  }
 
+  abrirModal() {
+    this.modalAbierto = true;
+  }
 
-  finalizarActividad() {
-    console.log("click");
+  crearNuevaActividad() {
+    this.actividadesService.agregarActividad(
+      this.nuevaActividad.nombre,
+      this.nuevaActividad.descripcion,
+      this.nuevaActividad.horas
+    );
+    this.modalAbierto = false;
+  }
 
-    if (!this.actividadSeleccionada) {
-      console.log('No hay actividad seleccionada.');
-      return;
+  eliminarActividad() {
+    if (this.actividadSeleccionada) {
+      this.actividadesService.eliminarActividadPorNombre(this.actividadSeleccionada);
+    } else {
+      console.error('No se ha seleccionado ninguna actividad para eliminar.');
     }
-
-    const participantesAEliminar = this.participantes.filter(participante => !participante.checkboxMarcado);
-
-    console.log('Participantes a eliminar:', participantesAEliminar);
-
-    participantesAEliminar.forEach(participante => {
-      this.firestore.collection<VoluntarioParaProtocolo>(
-        this.actividadSeleccionada ? this.actividadSeleccionada : '' // Comprobamos y asignamos un valor predeterminado en caso de ser null
-      , ref => ref.where('cedula', '==', participante.cedula))
-        .get()
-        .subscribe(querySnapshot => {
-          if (!querySnapshot) {
-            console.error('No se pudo obtener el documento.');
-            return;
-          }
-
-          querySnapshot.forEach(doc => {
-            doc.ref.delete().then(() => {
-              console.log('Documento eliminado:', doc.id);
-            }).catch(error => {
-              console.error('Error al eliminar el documento:', error);
-            });
-          });
-        }, error => {
-          console.error('Error al obtener el documento:', error);
-        });
-    });
+  }
+finalizarActividad(): void {
+  if (this.participantesConCheckboxActivo.length === 0) {
+    console.log('No hay registros con el checkbox activo para finalizar la actividad.');
+    return;
   }
 
+  this.actividadesService.agregarUsuario(this.participantesConCheckboxActivo[0])
+    .then(() => {
+    })
+    .catch((error) => {
+    });
+}
 
-
-
-
-
-
+  onCheckboxChange(voluntario: VoluntarioParaProtocolo): void {
+    if (voluntario.checkboxMarcado) {
+      this.participantesConCheckboxActivo.push(voluntario);
+    } else {
+      this.participantesConCheckboxActivo = this.participantesConCheckboxActivo.filter(v => v !== voluntario);
+    }
+  }
 }

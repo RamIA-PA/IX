@@ -1,68 +1,109 @@
+<div class="container-fluid">
+  <div class="row">
+    <!-- Aside -->
+    <div class="col-md-2 p-4 text-bg-dark" style="background-color: #333; color: white;">
+      <a (click)="nav()" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <svg class="bi pe-none me-2" width="40" height="32">
+          <use xlink:href="#bootstrap"></use>
+        </svg>
+        <span class="fs-4">Volver al calendario</span>
+      </a>
+      <hr>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a  class="nav-link active" aria-current="page">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#home"></use>
+            </svg>
+            Pagina de inicio
+          </a>
+        </li>
+        <li>
+          <a (click)="abrirModal()" class="nav-link text-white">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#speedometer2"></use>
+            </svg>
+            Nueva actividad
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link text-white">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#table"></use>
+            </svg>
+            Editar actividad
+          </a>
+        </li>
+        <li>
+          <a (click)="eliminarActividad()"
+            class="nav-link text-white">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#grid"></use>
+            </svg>
+            Delete actividad
+          </a>
+        </li>
+        <li class="nav-item">
+          <a  (click)="finalizarActividad()"class="nav-link text-white">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#grid"></use>
+            </svg>
+            Finalizar actividad
+          </a>
+        </li>
+      </ul>
+      <hr>
+    </div>
 
-
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Aside -->
-            <div class="col-md-2 p-4 text-bg-dark" style="background-color: #333; color: white;">
-                <a (click)="nav()" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                    <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-                    <span class="fs-4">Volver al calendario</span>
-                </a>
-                <hr>
-                <ul class="nav nav-pills flex-column mb-auto">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active" aria-current="page">
-                            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
-                            Pagina de inicio
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white">
-                            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-                          Nueva actividad
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white">
-                            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
-                            Editar actividad
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white">
-                            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-                            delete actividad
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                      <!-- Agregar el evento click directamente en el enlace <a> -->
-                      <a class="nav-link text-white" (click)="finalizarActividad()">
-                        <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-                        finalizar acti
-                      </a>
-                    </li>
-                </ul>
-                <hr>
-
-            </div>
-
-           <!-- Listado -->
+    <!-- Listado -->
     <div class="col-md-10 bg-light p-4">
       <h1 class="content">Listado de participantes de la actividad</h1>
       <ol id="lista-participantes" class="list-group list-group-numbered">
         <li class="list-group-item" *ngFor="let voluntario of participantes$ | async">
           {{"Voluntario: " + voluntario.nombre + " " + voluntario.apellido + " " + voluntario.cedula + " | Correo: " + voluntario.email + " | Actividad: " + voluntario.actividad + " | Horas: " + voluntario.horas + " | apoyo: "}}
-          <input class="form-check-input" type="checkbox" [(ngModel)]="voluntario.checkboxMarcado" id="defaultCheck1">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="voluntario.checkboxMarcado" id="defaultCheck1"
+       (change)="onCheckboxChange(voluntario)">
+
         </li>
-
       </ol>
-
 
       <div class="d-grid gap-2 mt-5">
         <div class="d-grid gap-2 mt-5">
           <button class="btn btn-dark" type="button" (click)="descargarListaComoPDF()">Imprimir lista de participantes</button>
         </div>
-            </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" [ngClass]="{'show': modalAbierto, 'd-block': modalAbierto}" tabindex="-1" role="dialog" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmarEliminarModalLabel">Nueva Actividad</h5>
+        <button type="button" class="close" aria-label="Close" (click)="cerrarModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #nuevaActividadForm="ngForm">
+          <div class="form-group">
+            <label for="nombre">Nombre de la actividad</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="nuevaActividad.nombre" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <input type="text" class="form-control" id="descripcion" name="descripcion" [(ngModel)]="nuevaActividad.descripcion" required>
+          </div>
+          <div class="form-group">
+            <label for="horas">Horas</label>
+            <input type="number" class="form-control" id="horas" name="horas" [(ngModel)]="nuevaActividad.horas" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="crearNuevaActividad()">Crear</button>
+      </div>
     </div>
   </div>
 </div>

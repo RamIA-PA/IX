@@ -4,44 +4,47 @@ import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
+import { ActividadService, NuevaActividad } from 'src/app/actividad.service';
+
+interface VoluntarioParaProtocolo {
+  nombre: string;
+  apellido: string;
+  actividad: string;
+  cedula: string;
+  descripcion: string;
+  email: string;
+  horas: number;
+  checkboxMarcado: boolean;
+}
 
 @Component({
   selector: 'app-actividades',
   templateUrl: './actividades.component.html',
-  styleUrls: ['./actividades.component.css']
+  styleUrls: ['./actividades.component.css'],
 })
 export class ActividadesComponent implements OnInit {
-
   loading: boolean = false;
-
   usuarioActual: any;
-
   datosUsuarioForm!: FormGroup;
   dataUser: any;
-
   modalAbierto: boolean = false;
   modalEliminarAbierto: boolean = false;
   usuarioAEliminarIdDocumento: string = '';
-
   mostrarcontenido: boolean = false;
-
 
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private actividadesService: ActividadService
   ) {
-    const collectionRef = this.firestore.collection('usuarios');
-
-
     this.afAuth.authState.subscribe((usuario) => {
       this.usuarioActual = usuario;
     });
   }
 
   ngOnInit(): void {
-
-
+    this.obtenerNuevasActividades();
     this.afAuth.onAuthStateChanged((user) => {
       if (user) {
         this.dataUser = user;
@@ -50,65 +53,58 @@ export class ActividadesComponent implements OnInit {
         this.router.navigate(['/login']);
       }
     });
-
-
   }
-
-
 
   actividadSeleccionada: string = '';
   descripcionSeleccionada: string = '';
   horasSeleccionadas: number = 0;
-
-
 
   verListado(actividad: string) {
     const nombreColeccion = actividad.toLowerCase().replace(/\s/g, '');
     this.router.navigate(['/listas'], { queryParams: { actividad: nombreColeccion } });
   }
 
-
   unirseAColeccionActividad(actividad: string, descripcion: string, horas: number) {
     const userEmail = this.dataUser.email;
+    const nombreColeccion = actividad.toLowerCase().replace(/\s/g, '');
 
-    // Verificar si el usuario ya se unió a la colección correspondiente
-    const nombreColeccion = actividad.toLowerCase().replace(/\s/g, ''); // Generar el nombre de la colección a partir de la actividad
-    this.firestore.collection(nombreColeccion, ref => ref.where('email', '==', userEmail))
+    this.firestore
+      .collection(nombreColeccion, (ref) => ref.where('email', '==', userEmail))
       .get()
-      .subscribe(querySnapshot => {
+      .subscribe((querySnapshot) => {
         if (!querySnapshot.empty) {
           console.log(`El usuario ya está registrado en la colección "${nombreColeccion}".`);
         } else {
-          // Si el usuario no está registrado, procedemos a agregarlo
-          this.firestore.collection('usuarios', ref => ref.where('email', '==', userEmail).where('actividad', '==', 'creacion'))
+          this.firestore
+            .collection('usuarios', (ref) =>
+              ref.where('email', '==', userEmail).where('actividad', '==', 'creacion')
+            )
             .get()
-            .subscribe(querySnapshot => {
+            .subscribe((querySnapshot) => {
               if (!querySnapshot.empty) {
-                // Debe haber solo un documento coincidente, ya que los correos electrónicos son únicos
                 const userData: any = querySnapshot.docs[0].data();
 
-                // Verificar si el documento tiene las propiedades necesarias
                 if ('nombre' in userData && 'apellido' in userData && 'cedula' in userData) {
-                  // Verificar si el límite de 10 usuarios ya se ha alcanzado en la colección correspondiente
-                  this.firestore.collection(nombreColeccion)
+                  this.firestore
+                    .collection(nombreColeccion)
                     .get()
-                    .subscribe(snapshot => {
+                    .subscribe((snapshot) => {
                       if (snapshot.size < 10) {
-                        // Agregar los datos del usuario a la colección correspondiente
-                        this.firestore.collection(nombreColeccion)
+                        this.firestore
+                          .collection(nombreColeccion)
                           .add({
                             nombre: userData.nombre,
                             apellido: userData.apellido,
                             cedula: userData.cedula,
                             email: userEmail,
                             horas: horas,
-                            actividad: actividad, // Utilizar el valor del parámetro actividad
-                            descripcion: descripcion
+                            actividad: actividad,
+                            descripcion: descripcion,
                           })
                           .then(() => {
                             console.log(`Usuario unido a la colección "${nombreColeccion}".`);
                           })
-                          .catch(error => {
+                          .catch((error) => {
                             console.error(`Error al unirse a la colección "${nombreColeccion}":`, error);
                           });
                       } else {
@@ -126,24 +122,41 @@ export class ActividadesComponent implements OnInit {
       });
   }
 
-
-
-
-
-
-
-
-
-
-
-
-  nav(){
-    this.router.navigate(["/listas"])
+  nav() {
+    this.router.navigate(['/listas']);
   }
 
+  nuevasActividades: NuevaActividad[] = [];
+  nuevaActividad: NuevaActividad = { nombre: '', descripcion: '', horas: 0 };
 
+  obtenerNuevasActividades() {
+    this.actividadesService.obtenerActividades().subscribe(
+      (actividades) => {
+        this.nuevasActividades = actividades;
+      },
+      (error) => {
+        console.error('Error al obtener actividades:', error);
+      }
+    );
+  }
 
+  crearNuevaActividad() {
+    this.actividadesService.agregarActividad(
+      this.nuevaActividad.nombre,
+      this.nuevaActividad.descripcion,
+      this.nuevaActividad.horas
+    );
 
+    this.obtenerNuevasActividades();
 
+    this.nuevaActividad = { nombre: '', descripcion: '', horas: 0 };
+    this.modalAbierto = false;
+  }
 
+  mostrarDiv: boolean = false;
+
+  actualizarVisibilidadDiv(): void {
+    const usuarioPermitidoUID = 'H1vrgH7AJ3aAVZbpQ3lNf75qqbb2';
+    this.mostrarDiv = this.usuarioActual?.uid === usuarioPermitidoUID;
+  }
 }
