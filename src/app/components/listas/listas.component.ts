@@ -158,6 +158,8 @@ finalizarActividad(): void {
     })
     .catch((error) => {
     });
+
+    this.eliminarActividad();
 }
 
   onCheckboxChange(voluntario: VoluntarioParaProtocolo): void {

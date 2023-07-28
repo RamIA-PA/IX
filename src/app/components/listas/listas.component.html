@@ -60,7 +60,7 @@
       <h1 class="content">Listado de participantes de la actividad</h1>
       <ol id="lista-participantes" class="list-group list-group-numbered">
         <li class="list-group-item" *ngFor="let voluntario of participantes$ | async">
-          {{"Voluntario: " + voluntario.nombre + " " + voluntario.apellido + " " + voluntario.cedula + " | Correo: " + voluntario.email + " | Actividad: " + voluntario.actividad + " | Horas: " + voluntario.horas + " | apoyo: "}}
+          {{"Voluntario: " + voluntario.nombre + " " + voluntario.apellido + " " + voluntario.cedula + " | Correo: " + voluntario.email + " | Actividad: " + this.actividadSeleccionada + " | Horas: " + voluntario.horas + " | apoyo: "}}
           <input class="form-check-input" type="checkbox" [(ngModel)]="voluntario.checkboxMarcado" id="defaultCheck1"
        (change)="onCheckboxChange(voluntario)">
 

@@ -23,14 +23,20 @@ export class ActividadService {
 
   constructor(private firestore: AngularFirestore) {
     this.actividadesCollection = this.firestore.collection<NuevaActividad>('actividades');
+    
+
+
   }
 
   obtenerActividades(): Observable<NuevaActividad[]> {
     return this.actividadesCollection.valueChanges();
   }
 
+  
+  
   agregarActividad(nombre: string, descripcion: string, horas: number): void {
-    const nuevaActividad: NuevaActividad = { nombre, descripcion, horas };
+    const nombreminuscula: string = nombre.toLowerCase().replace(/\s/g, '');
+    const nuevaActividad: NuevaActividad = { nombre: nombreminuscula, descripcion, horas };
     this.actividadesCollection.add(nuevaActividad);
   }
 
